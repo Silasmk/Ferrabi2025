@@ -42,8 +42,8 @@
     const loader = new GLTFLoader();
     loader.load('https://silasmk.github.io/Ferrabi2025/car.glb', (gltf) => {
         car = gltf.scene
+        scene.add(car)
     })
-    scene.add(car)
 
   
     const geometry = new THREE.BoxGeometry(1, 1, 1)
