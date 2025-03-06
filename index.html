@@ -40,18 +40,14 @@
 
     const loader = new GLTFLoader();
     loader.load('https://silasmk.github.io/Ferrabi2025/car.glb', (gltf) => {
-        const model = gltf.scene
-        
-        // Assuming the first child is the mesh
-        const mesh = model.children[0] 
+        console.log("GLB Modell geladen:", gltf);
 
-        if (mesh.isMesh) {
-
-            scene.add(mesh)
-        }
+        const model = gltf.scene;
+        scene.add(model);
     }, undefined, (error) => {
-        console.error('Error loading the GLB model:', error)
+        console.error('Fehler beim Laden des GLB-Modells:', error);
     });
+
   
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
