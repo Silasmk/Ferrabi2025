@@ -41,11 +41,7 @@
     let car
     const loader = new GLTFLoader();
     loader.load('https://silasmk.github.io/Ferrabi2025/car.glb', (gltf) => {
-        console.log("GLB Modell geladen:", gltf)
-
-        const car = gltf.scene
-    }, undefined, (error) => {
-        console.error('Fehler beim Laden des GLB-Modells:', error)
+        car = gltf.scene
     })
     scene.add(car)
 
