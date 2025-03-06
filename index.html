@@ -37,16 +37,17 @@
     document.body.appendChild(renderer.domElement)
   
     const controls = new OrbitControls(camera, renderer.domElement)
-
+    //Auto-Modell laden
+    let car
     const loader = new GLTFLoader();
     loader.load('https://silasmk.github.io/Ferrabi2025/car.glb', (gltf) => {
-        console.log("GLB Modell geladen:", gltf);
+        console.log("GLB Modell geladen:", gltf)
 
-        const model = gltf.scene;
-        scene.add(model);
+        const car = gltf.scene
     }, undefined, (error) => {
-        console.error('Fehler beim Laden des GLB-Modells:', error);
-    });
+        console.error('Fehler beim Laden des GLB-Modells:', error)
+    })
+    scene.add(car)
 
   
     const geometry = new THREE.BoxGeometry(1, 1, 1)
