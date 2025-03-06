@@ -41,9 +41,147 @@
     let car
     const loader = new GLTFLoader();
     loader.load('https://silasmk.github.io/Ferrabi2025/car.glb', (gltf) => {
-        car = gltf.scene
-        scene.add(car)
+      car = gltf.scene
+      car.Vel = [0, 0, 0]
+      car.Gas = 0
+      car.rotation.y = 0 //Math.PI / 180 * 90
+      car.castShadow = true
+      scene.add(car)
+      animate()
     })
+
+    const keys = {
+      w:{
+        pressed: false
+      },
+      s:{
+        pressed: false
+      },
+      a:{
+        pressed: false
+      },
+      d:{
+        pressed: false
+      }
+    }
+
+    window.addEventListener('keydown', (event) => {
+      console.log(event.code)
+      switch (event.code) {
+        case "KeyW":
+          keys.w.pressed = true
+          break
+        case "KeyS":
+          keys.s.pressed = true
+          break
+        case "KeyA":
+          keys.a.pressed = true
+          break
+        case "KeyD":
+          keys.d.pressed = true
+          break
+      }
+    })
+
+    window.addEventListener('keyup', (event) => {
+      console.log(event.code + " STOP")
+      switch (event.code) {
+        case "KeyW":
+          keys.w.pressed = false
+          break
+        case "KeyS":
+          keys.s.pressed = false
+          break
+        case "KeyA":
+          keys.a.pressed = false
+          break
+        case "KeyD":
+          keys.d.pressed = false
+          break
+      }
+    })
+
+    function animate() {
+      requestAnimationFrame(animate)
+      renderer.render(scene, camera)
+
+      //Gravity
+      if (car.position.y >= -1.8) {
+        car.position.y += car.Vel[1]
+        car.Vel[1] -= 0.01
+      }
+      else{
+        car.Vel[1] = 0;
+      }
+      //Steering
+      if (keys.a.pressed) {
+        car.rotation.y += Math.PI / 180 * (car.Gas * 8)
+      }
+
+      if (keys.d.pressed) {
+        car.rotation.y -= Math.PI / 180 * (car.Gas * 8)
+      }
+
+
+      //Drive Forward/Backwards
+      if (keys.w.pressed) {
+        if (car.Gas <=0.15) {
+          car.Gas += 0.002
+        }
+      }else {
+        if (car.Gas != 0) {
+          car.Gas = car.Gas * 0.999
+          if (car.Gas < 0.01) {
+            car.Gas = 0
+          }
+        }
+      }
+      if(keys.s.pressed) {
+        car.Gas = car.Gas * 0.9
+        if (car.Gas < 0.01) {
+            car.Gas = 0
+        }
+      }
+      car.Vel[2] = Math.sin(car.rotation.y) * car.Gas;
+      car.Vel[0] = Math.cos(car.rotation.y) * car.Gas;
+
+      
+      car.position.z += car.Vel[0]
+      car.position.x += car.Vel[2]
+
+      //Camera Position to ca
+      /*
+      camera.rotation.y = car.rotation.y - Math.PI
+      camera.rotation.x = 1
+      //camera.rotation.y = -camera.rotation.y
+      camera.position.x = car.position.x
+      camera.position.z = car.position.z
+      camera.position.y = 2 
+      camera.position.x -= Math.sin(car.rotation.y) * 5;
+      camera.position.z -= Math.cos(car.rotation.y) * 5;*/
+      updateCamera()
+    }
+
+    const cameraOffset = new THREE.Vector3(0, 5, -5);
+
+    function updateCamera() {
+      // Get the car's position and rotation (world position and world rotation)
+      const carPosition = new THREE.Vector3();
+      carPosition.setFromMatrixPosition(car.matrixWorld); // Get the car's world position
+
+      const carRotation = new THREE.Euler(0, car.rotation.y, 0, 'XYZ'); // Only rotate around the Y-axis
+
+      // Calculate the new camera position based on the car's rotation
+      const offset = cameraOffset.clone().applyEuler(carRotation); // Rotate the offset based on car's rotation
+      const targetPosition = carPosition.add(offset); // Position the camera at the target position
+
+      // Smoothly interpolate the camera's position towards the target position
+      camera.position.lerp(targetPosition, 0.1); // 0.1 controls the smoothness
+
+      // Make the camera look at the car (slightly above to avoid clipping)
+      const lookAtPosition = car.position.clone().add(new THREE.Vector3(0, 1, 0)); // Slightly above the car
+      camera.lookAt(lookAtPosition); // Make the camera look at the car
+    }
 
   
     const geometry = new THREE.BoxGeometry(1, 1, 1)
@@ -65,15 +203,4 @@
     light.position.y = 3
     light.castShadow = true
     scene.add(light)
-
-  
-    camera.position.z = 5
-  
-    function animate() {
-      requestAnimationFrame(animate)
-      renderer.render(scene, camera)
-      cube.rotation.x += 0.01
-      cube.rotation.y += 0.01
-    }
-    animate()
   </script>
