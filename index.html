@@ -39,7 +39,7 @@
     const controls = new OrbitControls(camera, renderer.domElement)
 
     const loader = new GLTFLoader();
-    loader.load('https://github.com/Silasmk/Ferrabi2025/blob/main/car.glb', (gltf) => {
+    loader.load('car.glb', (gltf) => {
         const model = gltf.scene
         
         // Assuming the first child is the mesh
