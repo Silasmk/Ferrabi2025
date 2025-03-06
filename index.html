@@ -39,22 +39,15 @@
     const controls = new OrbitControls(camera, renderer.domElement)
 
     const loader = new GLTFLoader();
-
-    loader.load('car.glb', (gltf) => {
+    loader.load('https://github.com/Silasmk/Ferrabi2025/blob/main/car.glb', (gltf) => {
         const model = gltf.scene
         
         // Assuming the first child is the mesh
         const mesh = model.children[0] 
 
         if (mesh.isMesh) {
-            const geometry2 = mesh.geometry
-            const material2 = mesh.material
 
-            console.log(geometry, material)
-
-            // Now you can use geometry and material in another mesh
-            const newMesh = new THREE.Mesh(geometry, material)
-            scene.add(newMesh)
+            scene.add(mesh)
         }
     }, undefined, (error) => {
         console.error('Error loading the GLB model:', error)
@@ -62,7 +55,7 @@
   
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
-    const cube = new THREE.Mesh(geometry2, material2)
+    const cube = new THREE.Mesh(geometry, material)
     cube.castShadow = true
     scene.add(cube)
 
